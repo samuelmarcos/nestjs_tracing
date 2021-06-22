@@ -1,18 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateUser } from './usersDTO/createUserDTO';
+import { UpdateUser } from './usersDTO/updateUserDTO';
 import { UsersService } from './users.service';
+import { userProviders } from './user.provider';
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly userService: UsersService) {}
 
     @Get()
-    getUsers() {
-        return {
-            name: 'Samuel',
-            email: 'samuel@email.com',
-            password: '123'
-        }
+    async getUsers(): Promise<CreateUser[]> {
+        return await this.userService.getAllUsers();
     }
 
 
@@ -22,17 +20,17 @@ export class UsersController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return `we get the dog with the id ${id}`;
+    async findOne(@Param('id') id: string) {
+        return await this.userService.getUser(id) 
     }
 
     @Put(':id')
-    update(@Param('id') id: string) {
-        return `we update the dog with the id ${id}`;
+    async update(@Body() updateUser: UpdateUser,  @Param('id') id: string) {
+        return await this.userService.editUser(id, updateUser);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return `we delete the dog with the id ${id}`;
+    async remove(@Param('id') id: string) {
+        return await this.userService.remove(id);
     }
 }
